@@ -2,6 +2,7 @@
 #include "vec_ops.h"
 #include "mpi.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void mst_bcast(float *vec, int size, int rank, int root, int left, int right)
 {
@@ -16,9 +17,11 @@ void mst_bcast(float *vec, int size, int rank, int root, int left, int right)
     }
 
     if (rank == root)
-        MPI_Send(vec, size, MPI_FLOAT, dest, rank, MPI_COMM_WORLD);
+        MPI_Send(vec, size, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
+
     if (rank == dest)
-        MPI_Recv(vec, size, MPI_FLOAT, root, rank, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(vec, size, MPI_FLOAT, root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
 
     if (rank <= mid && root <= mid) {
         mst_bcast(vec, size, rank, root, left, mid);
@@ -54,10 +57,10 @@ void mst_reduce(float *vec, int size, int rank, int root, int left, int right)
     }
 
     if (rank == src)
-        MPI_Send(vec, size, MPI_FLOAT, root, rank, MPI_COMM_WORLD);
+        MPI_Send(vec, size, MPI_FLOAT, root, 0, MPI_COMM_WORLD);
     if (rank == root) {
         float *tmp = (float*) malloc(size * sizeof(float));
-        MPI_Recv(tmp, size, MPI_FLOAT, src, rank, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(tmp, size, MPI_FLOAT, src, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         elementwise_add(vec, tmp, size);
         free(tmp);
     }
@@ -77,14 +80,14 @@ void mst_scatter(float *vec, int size, int rank, int root, int left, int right)
 
     if (root <= mid) {
         if (rank == root)
-            MPI_Send(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, dest, rank, MPI_COMM_WORLD);
+            MPI_Send(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
         if (rank == dest)
-            MPI_Recv(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, root, rank, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     } else {
         if (rank == root)
-            MPI_Send(vec, mid - left, MPI_FLOAT, dest, rank, MPI_COMM_WORLD);
+            MPI_Send(vec, mid - left, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
         if (rank == dest)
-            MPI_Recv(vec, mid - left, MPI_FLOAT, root, rank, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(vec, mid - left, MPI_FLOAT, root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
     if (rank <= mid && root <= mid) {
@@ -122,14 +125,14 @@ void mst_gather(float *vec, int size, int rank, int root, int left, int right)
 
     if (root <= mid) {
         if (rank == src)
-            MPI_Send(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, root, rank, MPI_COMM_WORLD);
+            MPI_Send(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, root, 0, MPI_COMM_WORLD);
         if (rank == root)
-            MPI_Recv(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, src, rank, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(vec + ((mid + 1) * sizeof(float)), right - (mid + 1), MPI_FLOAT, src, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     } else {
         if (rank == src)
-            MPI_Send(vec, mid - left, MPI_FLOAT, root, rank, MPI_COMM_WORLD);
+            MPI_Send(vec, mid - left, MPI_FLOAT, root, 0, MPI_COMM_WORLD);
         if (rank == root)
-            MPI_Recv(vec, mid - left, MPI_FLOAT, src, rank, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(vec, mid - left, MPI_FLOAT, src, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 }
 

@@ -4,7 +4,6 @@
 #include "builtin_ops.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #define STR_(X) #X
 #define STR(X) STR_(X)
@@ -25,7 +24,7 @@ int main(int argc, char **argv)
 #endif
 
     int data_sizes[] = { DATA_SIZES };
-    clock_t bench_timings[NUM_DATA_SIZES];
+    double bench_timings[NUM_DATA_SIZES];
 
     int my_rank, num_procs;
 
@@ -34,29 +33,33 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
     float *input_arr;
+    float *output_arr;
 
     for (int i = 0; i < NUM_DATA_SIZES; ++i) {
         int data_size = data_sizes[i];
         input_arr = (float*) calloc(data_size, sizeof(float));
+        output_arr = (float*) calloc(data_size, sizeof(float));
 
-        if (input_arr == NULL) {
+        if (input_arr == NULL || output_arr == NULL) {
             printf("--- FAILED: rank %d couldn't allocate sufficient memory for size %d\n", my_rank, data_size);
             return 1;
         }
+
+        fill_with_invalid(output_arr, 0, data_size);
 
         if (my_rank == 0)
             fill_sequences(data_size, 0, input_arr);
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        clock_t tic = clock();
-        OPERATION(input_arr, data_size, 0, my_rank, num_procs);
-        clock_t toc = clock();
-
-        printf("rank %d, size %d, operation completed in %ld\n", my_rank, data_size, toc - tic);
+        double tic = MPI_Wtime();
+        int opr = OPERATION(input_arr, output_arr, data_size, 0, my_rank, num_procs);
+        double toc = MPI_Wtime();
 
         bench_timings[i] = toc - tic;
         free(input_arr);
+        if (opr == 0)
+            free(output_arr);
     }
  
     MPI_Finalize();
@@ -65,7 +68,7 @@ int main(int argc, char **argv)
     snprintf(filename, 30, STR(OPERATION) "_%d.txt", my_rank);
     FILE *outfile = fopen(filename, "w");
     for (int i = 0; i < NUM_DATA_SIZES; ++i) {
-        fprintf(outfile, "%d,%ld\n", data_sizes[i], bench_timings[i]);
+        fprintf(outfile, "%d,%f\n", data_sizes[i], bench_timings[i]);
     }
     fclose(outfile);
 

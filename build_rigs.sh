@@ -18,7 +18,7 @@ for operation in "${OPERATIONS[@]}"; do
         echo "#SBATCH --mem=16G" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
 	echo "#SBATCH --output=""$operation"_"$size""_stdout.txt" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
 	echo "#SBATCH --error=""$operation"_"$size""_stderr.txt" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
-	echo "#SBATCH --time=01:00:00" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
+	echo "#SBATCH --time=00:10:00" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
 	echo "#SBATCH --job-name=collective_""$operation"_"$size" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
 	echo "#SBATCH --mail-user=sam.bird@ou.edu" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
 	echo "#SBATCH --mail-type=ALL" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
