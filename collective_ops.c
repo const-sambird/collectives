@@ -8,9 +8,9 @@
  * (that are not MPI builtins)
  *
  * all collectives have the interface
- * int COLLECTIVE_SIZE(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+ * int COLLECTIVE_SIZE(float *input, float **output, int size, int root_rid, int rank, int num_procs)
  * > float *input   - the input buffer. may also be utilised as the output buffer
- * < float *output  - a pointer to the output buffer. an array SHOULD be passed here, but
+ * < float **output - a pointer to the output buffer. an array SHOULD be passed here, but
  *                    we may free that array and pass a pointer back to the input array
  *                    (or an offset from the start of the input array)
  * > int size       - the size of the input data
@@ -28,49 +28,49 @@
  * @author Sam Bird <sam.bird@ou.edu>
  */
 
-int bcast_short(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int bcast_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_bcast(input, size, rank, root_rid, 0, num_procs - 1);
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int bcast_long(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int bcast_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_scatter(input, size, rank, root_rid, 0, num_procs - 1);
     bkt_allgather(input, size, rank, num_procs);
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int reduce_short(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int reduce_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_reduce(input, size, rank, root_rid, 0, num_procs - 1);
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int reduce_long(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int reduce_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     bkt_reduce_scatter(input, size, rank, num_procs);
     mst_gather(input, size, rank, root_rid, 0, num_procs - 1);
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int scatter_short(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int scatter_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_scatter(input, size, rank, root_rid, 0, num_procs - 1);
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int scatter_long(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int scatter_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     // sending individual messages
     if (rank == root_rid) {
@@ -82,20 +82,20 @@ int scatter_long(float *input, float *output, int size, int root_rid, int rank, 
         MPI_Recv(input + (rank * sizeof(float)), get_subset_size(rank, size, num_procs), MPI_FLOAT, root_rid, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input + (rank * (size / num_procs) * sizeof(float));
     return 1;
 }
 
-int gather_short(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int gather_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_gather(input, size, rank, root_rid, 0, num_procs - 1);
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int gather_long(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int gather_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     // sending individual messages
     if (rank == root_rid) {                                                                                
@@ -107,66 +107,66 @@ int gather_long(float *input, float *output, int size, int root_rid, int rank, i
         MPI_Send(input + (rank * sizeof(float)), get_subset_size(rank, size, num_procs), MPI_FLOAT, root_rid, 0, MPI_COMM_WORLD); 
     }
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int allgather_short(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int allgather_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_gather(input, size, rank, root_rid, 0, num_procs - 1);
     mst_bcast(input, size, rank, root_rid, 0, num_procs - 1);
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int allgather_long(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int allgather_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     bkt_allgather(input, size, rank, num_procs);
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int reduce_scatter_short(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int reduce_scatter_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_reduce(input, size, rank, root_rid, 0, num_procs - 1);
     mst_scatter(input, size, rank, root_rid, 0, num_procs - 1);
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int reduce_scatter_long(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int reduce_scatter_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     bkt_reduce_scatter(input, size, rank, num_procs);
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int allreduce_short(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int allreduce_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_reduce(input, size, rank, root_rid, 0, num_procs - 1);
     mst_bcast(input, size, rank, root_rid, 0, num_procs - 1);
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 
-int allreduce_long(float *input, float *output, int size, int root_rid, int rank, int num_procs)
+int allreduce_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     bkt_reduce_scatter(input, size, rank, num_procs);
     bkt_allgather(input, size, rank, num_procs);
 
-    free(output);
-    output = input;
+    free(*output);
+    *output = input;
     return 1;
 }
 

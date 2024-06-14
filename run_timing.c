@@ -33,12 +33,12 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
     float *input_arr;
-    float *output_arr;
+    float **output_arr;
 
     for (int i = 0; i < NUM_DATA_SIZES; ++i) {
         int data_size = data_sizes[i];
         input_arr = (float*) calloc(data_size, sizeof(float));
-        output_arr = (float*) calloc(data_size, sizeof(float));
+        *output_arr = (float*) calloc(data_size, sizeof(float));
 
         if (input_arr == NULL || output_arr == NULL) {
             printf("--- FAILED: rank %d couldn't allocate sufficient memory for size %d\n", my_rank, data_size);
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
         bench_timings[i] = toc - tic;
         free(input_arr);
         if (opr == 0)
-            free(output_arr);
+            free(*output_arr);
     }
  
     MPI_Finalize();
