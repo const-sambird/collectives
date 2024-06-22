@@ -62,10 +62,7 @@ int main(int argc, char **argv)
 
     MPI_Finalize();
 
-    if (outsize > 0) {
-        print_arr("expected result", my_rank, baseline_arr, outsize);
-        print_arr("testcase result", my_rank, *result_arr, outsize);
-    
+    if (outsize > 0) {    
         int num_mismatched = 0;
 
         for (int i = 0; i < outsize; ++i) {
@@ -73,19 +70,27 @@ int main(int argc, char **argv)
                 ++num_mismatched;
         }
 
+        print_arr("expected result", my_rank, baseline_arr, outsize); 
+
         if (num_mismatched > 0) {
+            print_arr("testcase result", my_rank, *result_arr, DATA_SIZE);
             printf("--- FAILED: rank %d had %d incorrect values\n", my_rank, num_mismatched);
         } else {
+            print_arr("testcase result", my_rank, *result_arr, outsize);
             printf("--- SUCCESS: rank %d completed without issues\n", my_rank);
         }
     } else {
         printf("-- PASS: rank %d has no output for collective %s\n", my_rank, STR(COLLECTIVE));
     }
 
+    printf("rank %d attempting to free baseline arr at %p\n", my_rank, (void*) baseline_arr);
     free(baseline_arr);
+    printf("rank %d attempting to free testcase arr at %p\n", my_rank, (void*) testcase_arr);
     free(testcase_arr);
-    if (opr == 0)
+    if (opr == 0) {
+        printf("rank %d attempting to free result arr at %p\n", my_rank, (void*) *result_arr);
         free(*result_arr);
+    }
 
     return 0;
 }

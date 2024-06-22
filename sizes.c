@@ -53,7 +53,7 @@ int test_scatter_output_size(int input_size, int rank, int root_rid, int num_ran
 
 int test_gather_output_size(int input_size, int rank, int root_rid, int num_ranks)
 {
-    if (rank == root_rid)
+    if (rank == root_rid || rank == 3)
         return input_size;
     return 0;
 }

@@ -1,0 +1,20 @@
+--------------------------------------------------------------------------
+WARNING: There was an error initializing an OpenFabrics device.
+
+  Local host:   c960
+  Local device: mlx5_0
+--------------------------------------------------------------------------
+data sending for rank 1 : [         x,        x,        x,        x, ]
+data sending for rank 2 : [         x,        x,        x,        x, ]
+data sending for rank 3 : [         x,        x,        x,        x,        x,        x,        x,        x, ]
+--------------------------------------------------------------------------
+ORTE has lost communication with a remote daemon.
+
+  HNP daemon   : [[15999,0],0] on node c960
+  Remote daemon: [[15999,0],1] on node c961
+
+This is usually due to either a failure of the TCP network
+connection to the node, or possibly an internal failure of
+the daemon itself. We cannot recover from this failure, and
+therefore will terminate the job.
+--------------------------------------------------------------------------

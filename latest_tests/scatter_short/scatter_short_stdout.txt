@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------
+WARNING: There was an error initializing an OpenFabrics device.
+
+  Local host:   c296
+  Local device: mlx4_0
+--------------------------------------------------------------------------
+rank 1 receiving from 0 into offset 4 a total of 4 elements: left 0, mid 0, right 1
+rank 0 sending to 3 from offset 8 a total of 8 elements: left 0, mid 1, right 3
+data sending for rank 0 : [  8.000000, 9.000000, 10.000000, 11.000000, 12.000000, 13.000000, 14.000000, 15.000000, ]
+rank 3 receiving from 0 into offset 8 a total of 8 elements: left 0, mid 1, right 3
+rank 2 receiving from 3 into offset 0 a total of 4 elements: left 2, mid 2, right 3
+rank 0 sending to 1 from offset 4 a total of 4 elements: left 0, mid 0, right 1
+data sending for rank 0 : [  4.000000, 5.000000, 6.000000, 7.000000, ]
+rank 3 sending to 2 from offset 0 a total of 4 elements: left 2, mid 2, right 3
+data sending for rank 3 : [  8.000000, 9.000000, 10.000000, 11.000000, ]
+expected result for rank 2 : [  8.000000, 9.000000, 10.000000, 11.000000, ]
+testcase result for rank 2 : [  8.000000, 9.000000, 10.000000, 11.000000, ]
+--- SUCCESS: rank 2 completed without issues
+expected result for rank 3 : [  12.000000, 13.000000, 14.000000, 15.000000, ]
+testcase result for rank 3 : [  12.000000, 13.000000, 14.000000, 15.000000, ]
+--- SUCCESS: rank 3 completed without issues
+expected result for rank 1 : [  4.000000, 5.000000, 6.000000, 7.000000, ]
+testcase result for rank 1 : [  4.000000, 5.000000, 6.000000, 7.000000, ]
+--- SUCCESS: rank 1 completed without issues
+expected result for rank 0 : [  0.000000, 1.000000, 2.000000, 3.000000, ]
+testcase result for rank 0 : [  0.000000, 1.000000, 2.000000, 3.000000, ]
+--- SUCCESS: rank 0 completed without issues

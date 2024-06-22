@@ -1,0 +1,18 @@
+--------------------------------------------------------------------------
+WARNING: There was an error initializing an OpenFabrics device.
+
+  Local host:   c076
+  Local device: mlx4_0
+--------------------------------------------------------------------------
+expected result for rank 0 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+testcase result for rank 0 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+--- SUCCESS: rank 0 completed without issues
+expected result for rank 1 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+testcase result for rank 1 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+--- SUCCESS: rank 1 completed without issues
+expected result for rank 3 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+testcase result for rank 3 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+--- SUCCESS: rank 3 completed without issues
+expected result for rank 2 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+testcase result for rank 2 : [  24.000000, 28.000000, 32.000000, 36.000000, ]
+--- SUCCESS: rank 2 completed without issues

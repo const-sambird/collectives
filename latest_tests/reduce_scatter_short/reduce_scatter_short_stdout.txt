@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------
+WARNING: There was an error initializing an OpenFabrics device.
+
+  Local host:   c150
+  Local device: mlx4_0
+--------------------------------------------------------------------------
+rank 1 receiving from 0 into offset 4 a total of 4 elements: left 0, mid 0, right 1
+rank 2 receiving from 3 into offset 0 a total of 4 elements: left 2, mid 2, right 3
+rank 0 sending to 3 from offset 8 a total of 8 elements: left 0, mid 1, right 3
+data sending for rank 0 : [  -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, ]
+rank 0 sending to 1 from offset 4 a total of 4 elements: left 0, mid 0, right 1
+data sending for rank 0 : [  -4.000000, -4.000000, -4.000000, -4.000000, ]
+rank 3 receiving from 0 into offset 8 a total of 8 elements: left 0, mid 1, right 3
+rank 3 sending to 2 from offset 0 a total of 4 elements: left 2, mid 2, right 3
+data sending for rank 3 : [  -4.000000, -4.000000, -4.000000, -4.000000, ]
+expected result for rank 1 : [  28.000000,        x,        x,        x, ]
+testcase result for rank 1 : [  4.000000, 5.000000, 6.000000, 7.000000, -4.000000, -4.000000, -4.000000, -4.000000,        x,        x,        x,        x,        x,        x,        x,        x, ]
+--- FAILED: rank 1 had 4 incorrect values
+expected result for rank 0 : [  24.000000,        x,        x,        x, ]
+testcase result for rank 0 : [  24.000000, 28.000000, 32.000000, 36.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, ]
+--- FAILED: rank 0 had 3 incorrect values
+expected result for rank 3 : [  36.000000,        x,        x,        x, ]
+testcase result for rank 3 : [  20.000000, 22.000000, 24.000000, 26.000000, -2.000000, -2.000000, -2.000000, -2.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, -4.000000, ]
+--- FAILED: rank 3 had 4 incorrect values
+expected result for rank 2 : [  32.000000,        x,        x,        x, ]
+testcase result for rank 2 : [  8.000000, 9.000000, 10.000000, 11.000000,        x,        x,        x,        x, -4.000000, -4.000000, -4.000000, -4.000000,        x,        x,        x,        x, ]
+--- FAILED: rank 2 had 4 incorrect values

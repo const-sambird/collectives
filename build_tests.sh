@@ -11,7 +11,7 @@ for operation in "${OPERATIONS[@]}"; do
         mpicc -DDATA_SIZE="$DATA_SIZE" -DCOLLECTIVE=test_"$operation" -DOPERATION="$operation"_"$size" run_testing.c mst_ops.c bkt_ops.c collective_ops.c vec_ops.c builtin_ops.c test_ops.c sizes.c -o ./tests/"$operation"_"$size"/"$operation"_"$size".mpi
         echo "#!/bin/bash" >> ./tests/"$operation"_"$size"/"$operation"_"$size".sh
         echo "#SBATCH --partition=normal"  >> ./tests/"$operation"_"$size"/"$operation"_"$size".sh
-        echo "#SBATCH --exclusive" >> ./tests/"$operation"_"$size"/"$operation"_"$size".sh
+        #echo "#SBATCH --exclusive" >> ./tests/"$operation"_"$size"/"$operation"_"$size".sh
         echo "#SBATCH --nodes=2" >> ./tests/"$operation"_"$size"/"$operation"_"$size".sh
 	echo "#SBATCH --ntasks=4" >> ./tests/"$operation"_"$size"/"$operation"_"$size".sh
 	echo "#SBATCH --ntasks-per-node=2" >> ./tests/"$operation"_"$size"/"$operation"_"$size".sh
