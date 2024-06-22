@@ -1,7 +1,8 @@
 #!/bin/bash
 
-declare -a OPERATIONS=("bcast" "reduce" "scatter" "gather" "allgather" "reduce_scatter" "allreduce")
+# declare -a OPERATIONS=("bcast" "reduce" "scatter" "gather" "allgather" "reduce_scatter" "allreduce")
 declare -a SIZES=("short" "long" "builtin")
+declare -a OPERATIONS=("bcast" "reduce" "scatter" "gather" "allgather" "allreduce")
 # declare -a OPERATIONS=("reduce" "reduce_scatter" "bcast" "allreduce" "allgather")
 # declare -a SIZES=("long")
 

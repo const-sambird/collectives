@@ -2,8 +2,6 @@
 #include "bkt_ops.h"
 #include "mpi.h"
 #include <stdlib.h>
-// debug
-#include <stdio.h>
 
 /*
  * COLLECTIVE OPERATIONS
@@ -78,7 +76,7 @@ int scatter_long(float *input, float **output, int size, int root_rid, int rank,
     if (rank == root_rid) {
         for (int i = 0; i < num_procs; ++i) {
             if (i == rank) continue;
-            MPI_Send(input + (i * sizeof(float) * (size / num_procs)), get_subset_size(i, size, num_procs), MPI_FLOAT, i, 0, MPI_COMM_WORLD);
+            MPI_Send(input + (i * (size / num_procs)), get_subset_size(i, size, num_procs), MPI_FLOAT, i, 0, MPI_COMM_WORLD);
         }
     } else {
         MPI_Recv(input, get_subset_size(rank, size, num_procs), MPI_FLOAT, root_rid, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
@@ -91,18 +89,10 @@ int scatter_long(float *input, float **output, int size, int root_rid, int rank,
 
 int gather_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
-    printf("rank %d, initial input pointer %p\n", rank, (void*) input);
-    printf("rank %d, initial output pointer %p\n", rank, (void*) *output);
     free(*output);
-    *output = input + (rank * (size / num_procs));
-    printf("rank %d, working input pointer %p\n", rank, (void*) input);
-    mst_gather(input, size / num_procs, rank, root_rid, 0, num_procs - 1);
-    // input += rank * (size / num_procs);
-    printf("rank %d, final input pointer %p\n", rank, (void*) input);
-    printf("rank %d, attempting to free output pointer %p\n", rank, (void*) *output);
-    // free(*output);
-    // *output = input;
-    printf("rank %d, returning an output pointer %p whose first value is %f\n", rank, (void*) *output, **output);
+    *output = input;
+    mst_gather(*output, size / num_procs, rank, root_rid, 0, num_procs - 1);
+    *output += rank * (size / num_procs);
     return 1;
 }
 
@@ -114,8 +104,8 @@ int gather_long(float *input, float **output, int size, int root_rid, int rank, 
             if (i == rank) continue;                                                                       
             MPI_Recv(input + (i * (size / num_procs)), get_subset_size(i, size, num_procs), MPI_FLOAT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE); 
         }
-    } else {                                                                                               
-        MPI_Send(input, get_subset_size(rank, size, num_procs), MPI_FLOAT, root_rid, 0, MPI_COMM_WORLD); 
+    } else { 
+        MPI_Send(input + (rank * (size / num_procs)), get_subset_size(rank, size, num_procs), MPI_FLOAT, root_rid, 0, MPI_COMM_WORLD); 
     }
 
     free(*output);
@@ -145,7 +135,7 @@ int allgather_long(float *input, float **output, int size, int root_rid, int ran
 int reduce_scatter_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_reduce(input, size, rank, root_rid, 0, num_procs - 1);
-    mst_scatter(input, size / num_procs, rank, root_rid, 0, num_procs - 1);
+    mst_scatter(input, num_procs, rank, root_rid, 0, num_procs - 1);
 
     free(*output);
     *output = input;

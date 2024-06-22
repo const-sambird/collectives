@@ -8,7 +8,7 @@ source ./op_dispatch_vars.sh
 for operation in "${OPERATIONS[@]}"; do
     for size in "${SIZES[@]}"; do
         mkdir -p ./linked/"$operation"_"$size"
-        mpicc -DDATA_SIZES="$DATA_SIZES" -DNUM_DATA_SIZES="$NUM_DATA_SIZES" -DOPERATION="$operation"_"$size" run_timing.c mst_ops.c bkt_ops.c collective_ops.c vec_ops.c builtin_ops.c -o ./linked/"$operation"_"$size"/"$operation"_"$size".mpi
+        mpicc -DDATA_SIZES="$DATA_SIZES" -DNUM_DATA_SIZES="$NUM_DATA_SIZES" -DOPERATION="$operation"_"$size" -DCOLLECTIVE=test_"$operation" run_timing.c mst_ops.c bkt_ops.c collective_ops.c vec_ops.c builtin_ops.c test_ops.c -o ./linked/"$operation"_"$size"/"$operation"_"$size".mpi
         echo "#!/bin/bash" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
         echo "#SBATCH --partition=normal"  >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh
         echo "#SBATCH --exclusive" >> ./linked/"$operation"_"$size"/"$operation"_"$size".sh

@@ -2,6 +2,7 @@
 #include "collective_ops.h"
 #include "vec_ops.h"
 #include "builtin_ops.h"
+#include "test_ops.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,21 +35,20 @@ int main(int argc, char **argv)
 
     float *input_arr;
     float **output_arr;
+    float *dummy_baseline;
 
     for (int i = 0; i < NUM_DATA_SIZES; ++i) {
         int data_size = data_sizes[i];
         input_arr = (float*) calloc(data_size, sizeof(float));
         *output_arr = (float*) calloc(data_size, sizeof(float));
+        dummy_baseline = (float*) calloc(data_size, sizeof(float));
 
         if (input_arr == NULL || output_arr == NULL) {
             printf("--- FAILED: rank %d couldn't allocate sufficient memory for size %d\n", my_rank, data_size);
             return 1;
         }
 
-        fill_with_invalid(output_arr, 0, data_size);
-
-        if (my_rank == 0)
-            fill_sequences(data_size, 0, input_arr);
+        COLLECTIVE(dummy_baseline, input_arr, data_size, my_rank, num_procs);
 
         MPI_Barrier(MPI_COMM_WORLD);
 
@@ -58,6 +58,7 @@ int main(int argc, char **argv)
 
         bench_timings[i] = toc - tic;
         free(input_arr);
+        free(dummy_baseline);
         if (opr == 0)
             free(*output_arr);
     }

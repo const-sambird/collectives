@@ -49,14 +49,18 @@ int scatter_builtin(float *input, float **output, int size, int root_rid, int ra
 
 int gather_builtin(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
-    MPI_Gather(input, get_subset_size(rank, size, num_procs), MPI_FLOAT, *output, size / num_procs, MPI_FLOAT, root_rid, MPI_COMM_WORLD);
-    return 0;
+    free(*output);
+    *output = input + (rank * (size / num_procs));
+    MPI_Gather(*output, get_subset_size(rank, size, num_procs), MPI_FLOAT, *output, size / num_procs, MPI_FLOAT, root_rid, MPI_COMM_WORLD);
+    return 1;
 }
 
 int allgather_builtin(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
-    MPI_Allgather(input, get_subset_size(rank, size, num_procs), MPI_FLOAT, *output, size / num_procs, MPI_FLOAT, MPI_COMM_WORLD);
-    return 0;
+    free(*output);
+    *output = input + (rank * (size / num_procs));
+    MPI_Allgather(*output, get_subset_size(rank, size, num_procs), MPI_FLOAT, *output, size / num_procs, MPI_FLOAT, MPI_COMM_WORLD);
+    return 1;
 }
 
 int reduce_scatter_builtin(float *input, float **output, int size, int root_rid, int rank, int num_procs)

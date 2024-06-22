@@ -55,7 +55,7 @@ void test_gather(float *baseline, float *testcase, int data_size, int rank, int 
     }
 
     fill_with_invalid(testcase, 0, data_size);
-    fill_arr(testcase, 0, data_size / num_ranks, (data_size / num_ranks) * rank);
+    fill_arr(testcase, (data_size / num_ranks) * rank, data_size / num_ranks, (data_size / num_ranks) * rank);
 }
 
 void test_scatter(float *baseline, float *testcase, int data_size, int rank, int num_ranks)
@@ -75,7 +75,7 @@ void test_allgather(float *baseline, float *testcase, int data_size, int rank, i
     fill_arr(baseline, 0, data_size, 0);
     
     fill_with_invalid(testcase, 0, data_size);
-    fill_arr(testcase, 0, data_size / num_ranks, (data_size / num_ranks) * rank);
+    fill_arr(testcase, (data_size / num_ranks) * rank, data_size / num_ranks, (data_size / num_ranks) * rank);
 }
 
 void test_reduce_scatter(float *baseline, float *testcase, int data_size, int rank, int num_ranks)
