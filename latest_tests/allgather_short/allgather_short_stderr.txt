@@ -1,8 +1,0 @@
-[c960][[15999,1],1][btl_openib_component.c:1648:init_one_device] error obtaining device attributes for mlx5_0 errno says Protocol not supported
-[c960][[15999,1],0][btl_openib_component.c:1648:init_one_device] error obtaining device attributes for mlx5_0 errno says Protocol not supported
-[c961][[15999,1],3][btl_openib_component.c:1648:init_one_device] error obtaining device attributes for mlx5_0 errno says Protocol not supported
-[c961][[15999,1],2][btl_openib_component.c:1648:init_one_device] error obtaining device attributes for mlx5_0 errno says Protocol not supported
-[c961][[15999,1],3][btl_tcp_endpoint.c:803:mca_btl_tcp_endpoint_complete_connect] connect() to 10.251.227.39 failed: No route to host (113)
-[c960.oscer.ou.edu:33123] 3 more processes have sent help message help-mpi-btl-openib.txt / error in device init
-[c960.oscer.ou.edu:33123] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
-slurmstepd: error: *** JOB 19702144 ON c960 CANCELLED AT 2024-06-19T02:23:33 DUE TO TIME LIMIT ***
