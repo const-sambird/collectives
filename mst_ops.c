@@ -66,21 +66,6 @@ void mst_reduce(float *vec, int size, int rank, int root, int left, int right)
     }
 }
 
-// TEMPORARY
-void tmp_print_arr(char *name, int rank, float *arr, int len)
-{   
-    printf("%s for rank %d : [ ", name, rank);
-    for (int i = 0; i < len; ++i) {
-        if (arr[i] == -1) {
-            printf("        x,");
-        } else {
-            printf(" %f,", arr[i]);
-        }
-    }   
-    
-    printf(" ]\n");
-}
-
 void mst_scatter(float *vec, int size, int rank, int root, int left, int right)
 {
     if (left == right) return;
@@ -95,22 +80,16 @@ void mst_scatter(float *vec, int size, int rank, int root, int left, int right)
 
     if (root <= mid) {
         if (rank == root) { 
-            printf("rank %d sending to %d from offset %d a total of %d elements: left %d, mid %d, right %d\n", rank, dest, ((mid + 1) * size), (right - (mid + 1) + 1) * size, left, mid, right);
-            tmp_print_arr("data sending", rank, vec + ((mid + 1) * size), (right - (mid + 1) + 1) * size);
             MPI_Send(vec + ((mid + 1) * size), (right - (mid + 1) + 1) * size, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
         }
         if (rank == dest) {
-            printf("rank %d receiving from %d into offset %d a total of %d elements: left %d, mid %d, right %d\n", rank, root, ((mid + 1) * size), (right - (mid + 1) + 1) * size, left, mid, right);
             MPI_Recv(vec + ((mid + 1) * size), (right - (mid + 1) + 1) * size, MPI_FLOAT, root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
     } else {
         if (rank == root) {
-            printf("rank %d sending to %d from offset %d a total of %d elements: left %d, mid %d, right %d\n", rank, dest, 0, (mid - left + 1) * size, left, mid, right);
-            tmp_print_arr("data sending", rank, vec + (left * size), (mid - left + 1) * size);
             MPI_Send(vec + (left * size), (mid - left + 1) * size, MPI_FLOAT, dest, 0, MPI_COMM_WORLD);
         }
         if (rank == dest) {
-            printf("rank %d receiving from %d into offset %d a total of %d elements: left %d, mid %d, right %d\n", rank, root, 0, (mid - left + 1) * size, left, mid, right);
             MPI_Recv(vec + (left * size), (mid - left + 1) * size, MPI_FLOAT, root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
     }
@@ -150,14 +129,12 @@ void mst_gather(float *vec, int size, int rank, int root, int left, int right)
 
     if (root <= mid) {
         if (rank == src) {
-            tmp_print_arr("data sending", rank, vec + ((mid + 1) * size), (right - (mid + 1) + 1) * size);
             MPI_Send(vec + ((mid + 1) * size), (right - (mid + 1) + 1) * size, MPI_FLOAT, root, 0, MPI_COMM_WORLD);
         }
         if (rank == root)
             MPI_Recv(vec + ((mid + 1) * size), (right - (mid + 1) + 1) * size, MPI_FLOAT, src, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     } else {
         if (rank == src) {
-            tmp_print_arr("data sending", rank, vec + (left * size), (mid - left + 1) * size);
             MPI_Send(vec + (left * size), (mid - left + 1) * size, MPI_FLOAT, root, 0, MPI_COMM_WORLD);
         }
         if (rank == root)

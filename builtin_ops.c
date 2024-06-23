@@ -51,7 +51,8 @@ int gather_builtin(float *input, float **output, int size, int root_rid, int ran
 {
     free(*output);
     *output = input + (rank * (size / num_procs));
-    MPI_Gather(*output, get_subset_size(rank, size, num_procs), MPI_FLOAT, *output, size / num_procs, MPI_FLOAT, root_rid, MPI_COMM_WORLD);
+    MPI_Gather(*output, get_subset_size(rank, size, num_procs), MPI_FLOAT, input, size / num_procs, MPI_FLOAT, root_rid, MPI_COMM_WORLD);
+    *output = input;
     return 1;
 }
 
