@@ -58,10 +58,10 @@ int gather_builtin(float *input, float **output, int size, int root_rid, int ran
 
 int allgather_builtin(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
-    free(*output);
-    *output = input + (rank * (size / num_procs));
-    MPI_Allgather(*output, get_subset_size(rank, size, num_procs), MPI_FLOAT, *output, size / num_procs, MPI_FLOAT, MPI_COMM_WORLD);
-    return 1;
+    input += (rank * (size / num_procs));
+    MPI_Allgather(input, get_subset_size(rank, size, num_procs), MPI_FLOAT, *output, size / num_procs, MPI_FLOAT, MPI_COMM_WORLD);
+    input -= (rank * (size / num_procs));
+    return 0;
 }
 
 int reduce_scatter_builtin(float *input, float **output, int size, int root_rid, int rank, int num_procs)

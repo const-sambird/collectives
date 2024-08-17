@@ -72,7 +72,7 @@ int main(int argc, char **argv)
     MPI_Finalize();
 
     char filename[50];
-    snprintf(filename, 50, STR(OPERATION) "_rank_%d_run_%d.txt", my_rank, RUN_INDEX);
+    snprintf(filename, 50, STR(OPERATION) "_rank_%d_run_%d.csv", my_rank, RUN_INDEX);
     FILE *outfile = fopen(filename, "w");
     for (int i = 0; i < NUM_DATA_SIZES; ++i) {
         fprintf(outfile, "%d,%f\n", data_sizes[i], bench_timings[i]);

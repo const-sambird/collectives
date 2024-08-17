@@ -135,19 +135,19 @@ int allgather_long(float *input, float **output, int size, int root_rid, int ran
 int reduce_scatter_short(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
     mst_reduce(input, size, rank, root_rid, 0, num_procs - 1);
-    mst_scatter(input, num_procs, rank, root_rid, 0, num_procs - 1);
+    mst_scatter(input, 1, rank, root_rid, 0, num_procs - 1);
 
     free(*output);
-    *output = input;
+    *output = input + rank;
     return 1;
 }
 
 int reduce_scatter_long(float *input, float **output, int size, int root_rid, int rank, int num_procs)
 {
-    bkt_reduce_scatter(input, size, rank, num_procs);
+    bkt_reduce_scatter(input, size / num_procs, rank, num_procs);
 
     free(*output);
-    *output = input;
+    *output = input + rank;
     return 1;
 }
 
